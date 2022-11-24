@@ -1,0 +1,51 @@
+version: 0.2
+
+
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 875525659788.dkr.ecr.us-east-1.amazonaws.com
+      
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...          
+      - docker build -t service1 -f ./service1/Dockerfile .
+      - docker tag service1:latest 875525659788.dkr.ecr.us-east-1.amazonaws.com/service1:latest
+      - docker build -t service2 -f ./service2/Dockerfile .
+      - docker tag service2:latest 875525659788.dkr.ecr.us-east-1.amazonaws.com/service2:latest
+      - docker build -t service3 -f ./service3/Dockerfile .
+      - docker tag service3:latest 875525659788.dkr.ecr.us-east-1.amazonaws.com/service3:latest
+      - docker build -t service4 -f ./service4/Dockerfile .
+      - docker tag service4:latest 875525659788.dkr.ecr.us-east-1.amazonaws.com/service4:latest
+      - docker build -t service5 -f ./service5/Dockerfile .
+      - docker tag service5:latest 875525659788.dkr.ecr.us-east-1.amazonaws.com/service5:latest
+      - docker build -t service6 -f ./service6/Dockerfile .
+      - docker tag service6:latest 875525659788.dkr.ecr.us-east-1.amazonaws.com/service6:latest
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push 875525659788.dkr.ecr.us-east-1.amazonaws.com/service1:latest
+      - docker push 875525659788.dkr.ecr.us-east-1.amazonaws.com/service2:latest
+      - docker push 875525659788.dkr.ecr.us-east-1.amazonaws.com/service3:latest
+      - docker push 875525659788.dkr.ecr.us-east-1.amazonaws.com/service4:latest
+      - docker push 875525659788.dkr.ecr.us-east-1.amazonaws.com/service5:latest
+      - docker push 875525659788.dkr.ecr.us-east-1.amazonaws.com/service6:latest
+      - echo Writing image definitions file...
+      - printf '[{"name":"react1-container","imageUri":"875525659788.dkr.ecr.us-east-1.amazonaws.com/service1:latest"}]' 875525659788.dkr.ecr.us-east-1.amazonaws.com/service1:latest > imagedefinitions1.json
+      - printf '[{"name":"react2-container","imageUri":"875525659788.dkr.ecr.us-east-1.amazonaws.com/service2:latest"}]' 875525659788.dkr.ecr.us-east-1.amazonaws.com/service2:latest > imagedefinitions2.json
+      - printf '[{"name":"react3-container","imageUri":"875525659788.dkr.ecr.us-east-1.amazonaws.com/service3:latest"}]' 875525659788.dkr.ecr.us-east-1.amazonaws.com/service3:latest > imagedefinitions3.json
+      - printf '[{"name":"react4-container","imageUri":"875525659788.dkr.ecr.us-east-1.amazonaws.com/service4:latest"}]' 875525659788.dkr.ecr.us-east-1.amazonaws.com/service4:latest > imagedefinitions4.json
+      - printf '[{"name":"react5-container","imageUri":"875525659788.dkr.ecr.us-east-1.amazonaws.com/service5:latest"}]' 875525659788.dkr.ecr.us-east-1.amazonaws.com/service5:latest > imagedefinitions5.json
+      - printf '[{"name":"react6-container","imageUri":"875525659788.dkr.ecr.us-east-1.amazonaws.com/service6:latest"}]' 875525659788.dkr.ecr.us-east-1.amazonaws.com/service6:latest > imagedefinitions6.json
+artifacts:
+    files:
+        - imagedefinitions1.json 
+        - imagedefinitions2.json 
+        - imagedefinitions3.json
+        - imagedefinitions4.json
+        - imagedefinitions5.json
+        - imagedefinitions6.json
